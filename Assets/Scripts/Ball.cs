@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-
+    public bool inPlay;
+    public Transform Paddle;
     [SerializeField] Paddle paddle1;
     [SerializeField] float xPush;
     [SerializeField] float yPush;
     [SerializeField] bool hasStarted = false;
     [SerializeField] Rigidbody2D rb;
-     Vector2 paddleToBallVector;
+    Vector2 paddleToBallVector;
+    public GameManager gm; 
 
     private void Start()
     {
@@ -21,6 +23,10 @@ public class Ball : MonoBehaviour
 
     private void Update()
     {
+        if (gm.gameOver)
+        {
+            return;
+        }
         if (!hasStarted)
         {
             LockBallToPaddle();
@@ -43,5 +49,15 @@ public class Ball : MonoBehaviour
     {
         Vector2 paddlePos = new Vector2(paddle1.transform.position.x, paddle1.transform.position.y);
         transform.position = paddlePos + paddleToBallVector;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.CompareTag("Bottom")) {
+            Debug.Log("Haha frajer");
+            rb.velocity = Vector2.zero;
+            hasStarted = false;
+            gm.UpdateLives(-1);
+        }
     }
 }
